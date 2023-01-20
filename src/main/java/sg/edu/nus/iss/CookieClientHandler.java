@@ -11,7 +11,7 @@ import java.net.Socket;
 
 public class CookieClientHandler implements Runnable {
 
-    private Socket socket = null;
+    final Socket socket; // use final Socket socket; dont assign null if use final
 
     public CookieClientHandler(Socket socket) {
         this.socket = socket;
@@ -48,7 +48,12 @@ public class CookieClientHandler implements Runnable {
                     String cookieValue = cookie.returnCookie();
                     dos.writeUTF(cookieValue);
                     dos.flush();
-                }else{
+                }else if(msgReceived.equalsIgnoreCase("close")){
+                    dos.writeUTF("Closing program.");
+                    dos.flush();
+                    socket.close();
+                }
+                else{
                     dos.writeUTF("Invalid command. Please enter 'get-cookie' to get a fortune cookie or 'close' to exit program.");
                     dos.flush();
                 }
